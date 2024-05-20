@@ -1,0 +1,9 @@
+        result_dataframe = self.dataframe
+        result_dataframe['approach_time'] = pd.to_datetime(result_dataframe['approach_time'], errors='coerce')
+        result_dataframe.dropna(subset=['approach_time'], inplace=True)
+        current_week = pd.to_datetime('today').isocalendar()[1]
+        result_dataframe['week_number'] = result_dataframe['approach_time'].apply(lambda x: x.isocalendar()[1])
+        result_dataframe = result_dataframe[result_dataframe['week_number'] == current_week]
+        result_dataframe['logging_date'] = result_dataframe['approach_time'].dt.date
+        result = result_dataframe.groupby('logging_date')['user_id'].nunique().reset_index()
+        return result
